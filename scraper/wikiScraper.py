@@ -1,4 +1,4 @@
-import requests
+import requests, re
 from bs4 import BeautifulSoup
 from typing import NamedTuple
 
@@ -9,7 +9,7 @@ _EXCLUDED_ALTS = ['Advertisement', 'Navigation menu', 'Jump to search', 'Jump to
 
 class PageElement(NamedTuple):
     tag: str
-    text: str
+    text: list
 
 
 def scrape_page(url):
@@ -34,12 +34,13 @@ def scrape_page(url):
 
         for each in main_content.descendants:
             if each.name and each.name not in _EXCLUDED_ALTS and each.get_text(strip=True):
-                element = PageElement(tag=each.name, text=each.get_text(strip=False).splitlines())
+                element = PageElement(tag=each.name, text=(lambda x: x.splitlines())(each.get_text(strip=False).strip()))
                 _PAGE_CONTENTS_LIST.append(element)
         for each in _PAGE_CONTENTS_LIST:
             for element in each.text:
                 if element == '' or element.isspace():
                     each.text.remove(element)
+
     except AttributeError as e:
         print(f"Error: {e}")
 
