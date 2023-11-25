@@ -8,8 +8,9 @@ _EXCLUDED_ALTS = ['Advertisement', 'Navigation menu', 'Jump to search', 'Jump to
 
 
 class PageElement(NamedTuple):
-    tag: str
-    text: list
+    html_tag: str
+    contents: list
+    link: str = None
 
 
 def scrape_page(url):
@@ -34,14 +35,36 @@ def scrape_page(url):
 
         for each in main_content.descendants:
             if each.name and each.name not in _EXCLUDED_ALTS and each.get_text(strip=True):
-                element = PageElement(tag=each.name, text=(lambda x: x.splitlines())(each.get_text(strip=False).strip()))
+                element = PageElement(html_tag=each.name,
+                                      contents=(lambda x: x.splitlines())(each.get_text(strip=False).strip()),
+                                      link=each.get('href') if each.get('href') else None)
                 _PAGE_CONTENTS_LIST.append(element)
         for each in _PAGE_CONTENTS_LIST:
-            for element in each.text:
+            for element in each.contents:
                 if element == '' or element.isspace():
                     each.text.remove(element)
 
     except AttributeError as e:
         print(f"Error: {e}")
 
+    _PAGE_CONTENTS_LIST = convert_relative_links_to_absolute(url, _PAGE_CONTENTS_LIST)
+
     return _PAGE_CONTENTS_LIST
+
+
+def convert_relative_links_to_absolute(url, page_contents):
+
+    parsed = []
+
+    url = (lambda x: x[:-6] if x.endswith('wiki/') else x)(url)
+
+    for each in page_contents:
+        if each.link and re.match(r'^(?!www\.|(?:http|ftp)s?://|[A-Za-z]:\\|//).*/', each.link):
+            web_url = url + each.link
+            element = PageElement(html_tag=each.html_tag, contents=each.contents, link=web_url)
+            parsed.append(element)
+        else:
+            web_url = None
+            element = PageElement(html_tag=each.html_tag, contents=each.contents, link=web_url)
+            parsed.append(element)
+    return parsed
