@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS element_template (
     html_tag varchar(255) NOT NULL,
     contents text NOT NULL,
     link varchar(255) DEFAULT NULL,
-    child_of int REFERENCES element_template(id)
+    child_of int REFERENCES element_template(id) DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS tables (

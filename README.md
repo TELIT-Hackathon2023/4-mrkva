@@ -21,7 +21,7 @@ All required packages are listed in `requirements.txt` file. To install them, ru
 pip install -r requirements.txt
 ```
 
-## Deploy database and api  
+## Deploy PostgreSQL and FastAPI  
 
 We are using docker to deploy our database and api. To deploy them, simply run:
 
