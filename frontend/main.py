@@ -2,6 +2,13 @@ import streamlit as st
 import requests, json
 
 
+def is_empty_json(json_str):
+    try:
+        json_obj = json.loads(json_str)
+        return json_obj is None or not bool(json_obj)
+    except json.decoder.JSONDecodeError:
+        return True
+
 def get_database_list():
     endpoint = "http://api:80/fandom_wikis"
 
@@ -49,6 +56,8 @@ def main():
     st.title("Knowledge Extraction")
     st.header("Team MRKVA")
 
+    result = {}
+
     st.subheader("Select database to search:")
     # Dropdown to select a database
     database_list = get_database_list()
@@ -64,8 +73,9 @@ def main():
     if st.button("Get recommended result from database"):
         result = process_input_detailed(input_text, selected_database)
 
-    st.subheader("Response:")
-    st.json(result, expanded=False)
+    if result != {}:
+        st.subheader("Response:")
+        st.json(result, expanded=False)
 
 
 if __name__ == "__main__":
