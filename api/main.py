@@ -1,8 +1,7 @@
 from fastapi import (
     FastAPI,
     HTTPException,
-    Depends,
-    Request, Path
+    Depends
 )
 from sqlalchemy import (
     create_engine,
@@ -11,13 +10,8 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    Date,
     Text,
-    Numeric,
-    DateTime,
-    func,
-    Boolean,
-    text
+    Boolean
 )
 
 from sqlalchemy.orm import (
@@ -33,8 +27,7 @@ from tenacity import (
 )
 
 from pydantic import BaseModel
-
-import scraper.wikiScraper as wikiScraper
+from scraper import wikiScraper
 
 database = "postgresql://postgres:MundianToBachKe@postgres:5432/telit_hack_db"
 engine = create_engine(database)
@@ -142,7 +135,11 @@ def post_fandom_wiki(request: FandomWikiRequest, db: Session = Depends(get_db)):
                 # Insert data into the dynamically created table
                 db.execute(
                     dynamic_table.insert(),
-                    {"html_tag": each.html_tag, "contents": each.contents, "link": each.link},
+                    {
+                        "html_tag": each.html_tag,
+                        "contents": each.contents,
+                        "link": each.link
+                    },
                 )
 
         db.commit()
@@ -190,7 +187,11 @@ def get_fandom_wiki_contents(table_name: str, db: Session = Depends(get_db)):
 
 
 @app.get("/fandom_wikis/{table_name}/contents/{searched_keyword}")
-def get_fandom_wiki_contents_searched(table_name: str, searched_keyword: str, db: Session = Depends(get_db)):
+def get_fandom_wiki_contents_searched(
+        table_name: str,
+        searched_keyword: str,
+        db: Session = Depends(get_db)
+):
     dynamic_table = Table(table_name, metadata, autoload=True, autoload_with=engine)
     if dynamic_table is None:
         raise HTTPException(status_code=404, detail="Table not found")
