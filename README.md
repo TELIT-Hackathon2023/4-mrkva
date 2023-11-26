@@ -2,6 +2,8 @@
 
 ## General information
 
+![Team MRKVA Logo](.presentation/Team_MRKVA.png)
+
 Event: TELIT HACKATHON 2023  
 
 Team: Mrkva  
@@ -12,6 +14,10 @@ Members:
 - [x] Daniel Fedič  
 - [x] Michaela Vaľovská  
 - [x] Diana Oršolyová  
+
+## Project structure diagram
+
+![Project Structure Diagram](.presentation/project_structure.png)
 
 ## Prepare environment
 
