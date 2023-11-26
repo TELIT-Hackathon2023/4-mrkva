@@ -1,1 +1,13 @@
+# Ignore IDE files
 .idea
+.vscode
+
+# Ignore exported data from database
+*/*.csv
+*/data
+
+# Ignore database files
+*/postgres-data
+
+# Ignore pycache
+*/__pycache__

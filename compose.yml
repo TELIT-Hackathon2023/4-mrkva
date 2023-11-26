@@ -1,0 +1,25 @@
+# DOCKER COMPOSE FOR BACKEND SERVICES (API, DATABASE)
+# -----------------------------------------------------
+version: '3.8'
+services:
+  api:
+    hostname: fastapi
+    build:
+      context: ./api
+    ports:
+    - "80:80"
+    volumes:
+    - ./api:/app
+    depends_on:
+    - database
+  database:
+    hostname: postgres
+    image: postgres:latest
+    ports:
+    - "5432:5432"
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=MundianToBachKe
+    - POSTGRES_DB=telit_hack_db
+    volumes:
+    - ./database/postgres-data:/var/lib/postgresql/data
