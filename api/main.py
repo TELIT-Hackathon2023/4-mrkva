@@ -206,3 +206,26 @@ def get_fandom_wiki_contents_searched(
         for row in rows
         if searched_keyword in row.contents
     ]
+
+
+@app.get("/fandom_wikis/{table_name}/contents/{searched_keyword}/{tag}")
+def get_fandom_wiki_contents_searched(
+        table_name: str,
+        searched_keyword: str,
+        tag: str,
+        db: Session = Depends(get_db)
+):
+    dynamic_table = Table(table_name, metadata, autoload=True, autoload_with=engine)
+    if dynamic_table is None:
+        raise HTTPException(status_code=404, detail="Table not found")
+    rows = db.query(dynamic_table).all()
+    return [
+        {
+            "id": row.id,
+            "html_tag": row.html_tag,
+            "contents": row.contents,
+            "link": row.link
+        }
+        for row in rows
+        if searched_keyword in row.contents and tag in row.html_tag
+    ]

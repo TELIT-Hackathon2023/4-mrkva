@@ -106,7 +106,7 @@ def deduplicate_page_element(page_tree):
                 deduplicated_contents.append(element)
 
     deduplicate_recursive(page_tree)
-    deduplicated_contents = _deduplicate_page_element_contents(deduplicated_contents)
+    #deduplicated_contents = _deduplicate_page_element_contents(deduplicated_contents)
     return deduplicated_contents
 
 
