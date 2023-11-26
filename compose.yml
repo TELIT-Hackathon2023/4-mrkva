@@ -12,6 +12,7 @@ services:
     - ./api:/app
     depends_on:
     - database
+
   database:
     hostname: postgres
     image: postgres:latest
@@ -23,3 +24,14 @@ services:
     - POSTGRES_DB=telit_hack_db
     volumes:
     - ./database/postgres-data:/var/lib/postgresql/data
+
+  frontend:
+    hostname: streamlit
+    build:
+      context: ./frontend
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - api
