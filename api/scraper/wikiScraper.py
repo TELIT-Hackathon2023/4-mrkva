@@ -1,7 +1,8 @@
-import requests, re
-from bs4 import BeautifulSoup
 from typing import NamedTuple
 
+import re
+import requests
+from bs4 import BeautifulSoup
 
 _EXCLUDED_CLASSES = ['animangafooter', 'global-footer', 'bottom-ads-container']
 _EXCLUDED_ALTS = ['Advertisement', 'Navigation menu', 'Jump to search', 'Jump to navigation', 'Jump to main content',]
@@ -105,4 +106,36 @@ def deduplicate_page_element(page_tree):
                 deduplicated_contents.append(element)
 
     deduplicate_recursive(page_tree)
+    deduplicated_contents = _deduplicate_page_element_contents(deduplicated_contents)
     return deduplicated_contents
+
+
+def _deduplicate_page_element_contents(page_tree):
+    deduplicated_contents = []
+
+    def deduplicate_recursive(contents):
+        for element in contents:
+            if element.contents not in deduplicated_contents:
+                deduplicated_contents.append(element.contents)
+
+    deduplicate_recursive(page_tree)
+    return deduplicated_contents
+
+
+def get_page_title(url):
+    try:
+        page = requests.get(url)
+        page.raise_for_status()
+    except requests.RequestException as e:
+        print(f"Error related to request occurred: {e}")
+    except Exception as e:
+        print(f"Unexpected exception has occurred: {e}")
+
+    try:
+        # Get contents of the page using BeautifulSoup and then find in them div which contains main content
+        main_content = BeautifulSoup(page.content, 'html.parser')
+        title = main_content.find('title').get_text(strip=True)
+        title = re.sub(r'\W+', '_', title)
+        return title
+    except AttributeError as e:
+        print(f"Error: {e}")

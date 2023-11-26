@@ -5,7 +5,7 @@ FROM python:3.9-slim-buster
 WORKDIR /app
 
 # Copy the requirements.txt file into the Docker image
-COPY ../requirements.txt .
+COPY requirements.txt .
 
 # Install any needed packages specified in requirements.txt
 RUN apt-get update && apt-get install -y libpq-dev gcc \
